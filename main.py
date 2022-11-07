@@ -15,9 +15,9 @@ app = Client("YouTube-Robot", bot_token = token, api_id = api_id, api_hash = api
 programmer_id = '5495221292'
 
 start_message = """
-**👋🏻 مرحبـاً **{}
+👋🏻 مرحبـاً {}
 
-**🌐 أنا بـوت تحميـل من اليوتيـوب بأعلـى دقـة**
+🌐 أنا بـوت تحميـل من اليوتيـوب بأعلـى دقـة
 
 ⚡️** لتحميـل فيديــو / صـوت **
  ┤ أرسـل رابـط الفيديـو
@@ -28,8 +28,10 @@ start_message = """
  ╯ انسـخ الرابـط و ارسلـه هنـا لتحميلـه أو في اي محادثـة البوت مشرفـاً فيهـا
 
 🔎** للبحـث عـن فيديـو وجلـب نتائـج متعددة **
-┤ اكتـب "@YTXIBOT + النـص "
-╯ إضغـط فـوق النتيجـه التـي تريدهـا
+ ┤ اكتـب "@YTXIBOT + النـص "
+ ╯ إضغـط فـوق النتيجـه التـي تريدهـا
+
+🗒 البـوت يعمـل في المجموعـات بـدون مشاكـل ، يجـب أن يكـون البـوت مشرفاً و يمكـن لأي عضـو استخدامـه
 """
 
 first_loading_message = "⚡"
@@ -39,7 +41,7 @@ uploading_audio_message = "** ⏳ جـار التحضيـر لإرسـال ال�
 done_message = """
 **👤 المستخـدم : **{}**
 
-🧸 تـم تنفيـذ طلبـك بنجـاح فـي **`1s`**
+🧸 تـم تنفيـذ طلبـك بنجـاح فـي **`{}`** ثانيـه
 
 🔗 الرابـط : **`{}`
 """
@@ -52,8 +54,11 @@ async def start(client, message):
     reply_markup = InlineKeyboardMarkup(
       [
         [
+          InlineKeyboardButton(" ➕ أضـف البـوت إلـي مجموعتـك ➕ ", url = f"https://t.me/YTXIBOT?startgroup=true"),
+        ],
+        [
           InlineKeyboardButton(" قناة التحديثات 🛠 ", url = f"https://t.me/TD_T1"),
-          InlineKeyboardButton(" 🧑‍💻 المطـور ", url = f"https://t.me/a7mednegm"),
+          InlineKeyboardButton(" المطـور 👨‍💻 ", url = f"https://t.me/a7mednegm"),
         ],
         [
           InlineKeyboardButton(" استخدام الـ Inline 👾 ", switch_inline_query_current_chat = f""),
@@ -80,6 +85,7 @@ async def ytdl(client, message):
 
 @app.on_callback_query(filters.regex("video"))
 async def VideoDownLoad(client, callback_query):
+  start = time()
   await callback_query.edit_message_text(first_loading_message)
   try:
     url = callback_query.message.text.split(' : ',1)[1]
@@ -99,12 +105,14 @@ async def VideoDownLoad(client, callback_query):
     supports_streaming = True,
     caption = f"[{ytdl_data['title']}]({url})"
   )
-  await callback_query.edit_message_text(done_message.format(callback_query.message.from_user.mention, url))
+  delta_ping = time() - start
+  await callback_query.edit_message_text(done_message.format(callback_query.from_user.mention, f"{delta_ping * 1000:.3f}", url))
   os.remove(video_file) 
 
 
 @app.on_callback_query(filters.regex("audio"))
 async def AudioDownLoad(client, callback_query):
+  start = time()
   await callback_query.edit_message_text(first_loading_message)
   try:
     url = callback_query.message.text.split(' : ',1)[1]
@@ -127,7 +135,8 @@ async def AudioDownLoad(client, callback_query):
     thumb = thumb,
     caption = f"[{ytdl_data['title']}]({url})"
   )
-  await callback_query.edit_message_text(done_message.format(callback_query.message.from_user.mention, url))
+  delta_ping = time() - start
+  await callback_query.edit_message_text(done_message.format(callback_query.from_user.mention, f"{delta_ping * 1000:.3f}", url))
   os.remove(audio_file)
   os.remove(thumb)
 
@@ -179,7 +188,7 @@ async def inline(client, query: InlineQuery):
       answers.append(
         InlineQueryResultArticle(
           title = result["title"],
-          description = "{}, {} مشاهدة".format(
+          description = "المـده : {} • المشاهـدات {}".format(
           result["duration"], result["views"]
         ),
         input_message_content = InputTextMessageContent(
@@ -198,7 +207,8 @@ async def inline(client, query: InlineQuery):
           switch_pm_text="حدث خطأ !",
           switch_pm_parameter="",
         )
-            
+
+         
 video = {"format": "best","keepvideo": True,"prefer_ffmpeg": False,"geo_bypass": True,"outtmpl": "%(title)s.%(ext)s","quite": True}
 audio = {"format": "bestaudio","keepvideo": False,"prefer_ffmpeg": False,"geo_bypass": True,"outtmpl": "%(title)s.mp3","quite": True}
 
