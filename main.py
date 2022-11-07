@@ -4,9 +4,6 @@ from pyrogram.types import InlineKeyboardMarkup,InlineKeyboardButton,InlineQuery
 from yt_dlp import YoutubeDL
 from youtube_search import YoutubeSearch
 
-from time import time
-from datetime import datetime
-
 import os, wget
 
 
@@ -34,7 +31,7 @@ start_message = """
  ┤ اكتـب "@YTXIBOT + النـص "
  ╯ إضغـط فـوق النتيجـه التـي تريدهـا
 
-🗒 البـوت يعمـل في المجموعـات بـدون مشاكـل ، يجـب أن يكـون البـوت مشرفاً و يمكـن لأي عضـو استخدامـه
+--🗒 البـوت يعمـل في المجموعـات بـدون مشاكـل ، يجـب أن يكـون البـوت مشرفاً و يمكـن لأي عضـو استخدامـه--
 """
 
 first_loading_message = "⚡"
@@ -43,8 +40,6 @@ uploading_video_message = "** ⏳ جـار التحضيـر لإرسـال ال�
 uploading_audio_message = "** ⏳ جـار التحضيـر لإرسـال الصـوت ، انتظـر قليـلاً... **"
 done_message = """
 **👤 المستخـدم : **{}**
-
-🧸 تـم تنفيـذ طلبـك بنجـاح فـي **`{}`** ثانيـه
 
 🔗 الرابـط : **`{}`
 """
@@ -88,7 +83,6 @@ async def ytdl(client, message):
 
 @app.on_callback_query(filters.regex("video"))
 async def VideoDownLoad(client, callback_query):
-  start = time()
   await callback_query.edit_message_text(first_loading_message)
   try:
     url = callback_query.message.text.split(' : ',1)[1]
@@ -108,14 +102,12 @@ async def VideoDownLoad(client, callback_query):
     supports_streaming = True,
     caption = f"[{ytdl_data['title']}]({url})"
   )
-  delta_ping = time() - start
-  await callback_query.edit_message_text(done_message.format(callback_query.from_user.mention, f"{delta_ping * 1000:.3f}", url))
+  await callback_query.edit_message_text(done_message.format(callback_query.from_user.mention, url))
   os.remove(video_file) 
 
 
 @app.on_callback_query(filters.regex("audio"))
 async def AudioDownLoad(client, callback_query):
-  start = time()
   await callback_query.edit_message_text(first_loading_message)
   try:
     url = callback_query.message.text.split(' : ',1)[1]
@@ -138,8 +130,7 @@ async def AudioDownLoad(client, callback_query):
     thumb = thumb,
     caption = f"[{ytdl_data['title']}]({url})"
   )
-  delta_ping = time() - start
-  await callback_query.edit_message_text(done_message.format(callback_query.from_user.mention, f"{delta_ping * 1000:.3f}", url))
+  await callback_query.edit_message_text(done_message.format(callback_query.from_user.mention, url))
   os.remove(audio_file)
   os.remove(thumb)
 
