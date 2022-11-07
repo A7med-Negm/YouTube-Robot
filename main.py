@@ -4,6 +4,9 @@ from pyrogram.types import InlineKeyboardMarkup,InlineKeyboardButton,InlineQuery
 from yt_dlp import YoutubeDL
 from youtube_search import YoutubeSearch
 
+from time import time
+from datetime import datetime
+
 import os, wget
 
 
@@ -11,7 +14,7 @@ api_id = int(os.environ.get("APP_ID"))
 api_hash = os.environ.get("API_HASH")
 token = os.environ.get("TOKEN")
 
-app = Client("YouTube-Robot", bot_token = token, api_id = api_id, api_hash = api_hash)
+app = Client("YouTube-Robot", bot_token = token, api_id = 21871538, api_hash = "da886aa415f35a1c679744d3b24ac79e")
 programmer_id = '5495221292'
 
 start_message = """
